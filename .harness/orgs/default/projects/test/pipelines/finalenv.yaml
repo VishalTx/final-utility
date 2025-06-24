@@ -1,0 +1,48 @@
+pipeline:
+  name: final-env
+  identifier: finalenv
+  projectIdentifier: test
+  orgIdentifier: default
+  tags: {}
+  properties:
+    ci:
+      codebase:
+        connectorRef: account.Github_OAuth_1711001384310
+        repoName: VishalTx/final-utility
+        build: <+input>
+  stages:
+    - stage:
+        name: env
+        identifier: env
+        description: ""
+        type: CI
+        spec:
+          cloneCodebase: true
+          caching:
+            enabled: true
+            override: false
+          platform:
+            os: Linux
+            arch: Amd64
+          runtime:
+            type: Docker
+            spec: {}
+          execution:
+            steps:
+              - step:
+                  type: Run
+                  name: Run_1
+                  identifier: Run_1
+                  spec:
+                    connectorRef: Shabdockerhub
+                    image: python
+                    shell: Sh
+                    command: |-
+                      cd src
+                      pip install -r src/requirements.txt
+                      echo "Contents of the .env file:"
+                      cat ${HARNESS_SECRET_FILE_env}>.env
+                      cat .env
+                      python job_launcher.py job_load_in
+        delegateSelectors:
+          - docker-delegate
