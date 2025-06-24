@@ -41,7 +41,8 @@ pipeline:
                       cd src
                       pip install -r requirements.txt
                       echo "Contents of the .env file:"
-                      cat ${HARNESS_SECRET_FILE_env}>.env
+                      ENV_SECRET: <+secrets.getValue("env")>
+                      echo "$ENV_SECRET" > .env
                       cat .env
                       python job_launcher.py job_load_in
         delegateSelectors:
