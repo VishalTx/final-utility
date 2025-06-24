@@ -3,7 +3,7 @@ from utils.config_wrapper import ConfigWrapper
 from git import Repo, GitCommandError
 
 def clone_fresh(username, repository_address, token, local_path):
-    repository_url = f"https://{username}:{token}@{repository_address}"
+    repository_url = f"https://github.com/VishalTx/{repository_address}"
     print(f"Cloning {repository_url} into {local_path}")
     print("BitBucket Repo Synchronization In Progress")
     try:
@@ -19,9 +19,9 @@ def pull_latest(local_path):
         print("Fetching updates from the remote repository...")
         repo = Repo(local_path)
         origin = repo.remotes.origin
-        origin.pull('dev')
-        repo.git.reset('--hard', 'origin/dev')
-        print("Reset --hard origin/dev completed successfully.")
+        origin.pull('master')
+        repo.git.reset('--hard', 'origin/master')
+        print("Reset --hard origin/master completed successfully.")
         return 2, True, 'Success'
     except GitCommandError as e:
         print("Git error:", e)
