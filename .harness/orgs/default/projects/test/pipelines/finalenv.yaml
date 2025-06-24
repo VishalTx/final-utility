@@ -39,15 +39,21 @@ pipeline:
                     shell: Sh
                     command: |-
                       cd src
-
                       pip install -r requirements.txt
 
+                      echo "Loading .env from Harness secrets..."
                       echo "$ENV_SECRET" > .env
 
+                      # Fix Windows line endings (CRLF -> LF)
+                      tr -d '\r' < .env > clean.env && mv clean.env .env
+
                       echo "Contents of the .env file:"
+                      cat .env
 
-                      export $(cat .env | grep -v '^#' | xargs)
+                      # Export variables to shell
+                      export $(grep -v '^#' .env | xargs)
 
+                      echo "Running job_launcher.py..."
                       python job_launcher.py job_load_in
                     envVariables:
                       ENV_SECRET: <+secrets.getValue("env")>
