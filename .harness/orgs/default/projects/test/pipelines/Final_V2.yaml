@@ -1,6 +1,6 @@
 pipeline:
-  name: Final
-  identifier: Final
+  name: Final V2
+  identifier: Final_V2
   projectIdentifier: test
   orgIdentifier: default
   tags: {}
@@ -8,7 +8,7 @@ pipeline:
     ci:
       codebase:
         connectorRef: account.Github_OAuth_1711001384310
-        repoName: VishalTx/final-utility
+        repoName: VishalTx/D3
         build: <+input>
   stages:
     - stage:
@@ -64,9 +64,13 @@ pipeline:
                        
                       jira_token="$Jira_Api_Token"
 
-                      aws_account_id="$AWS_ACCOUNT_ID"
+                      #aws_account_id="$AWS_ACCOUNT_ID"
 
                       api_access_token="$API_Access_Token"
+
+                      user_name="$username"
+
+                      pass_word="$password"
                        
                       # Step 3: Move into project directory
 
@@ -114,9 +118,13 @@ pipeline:
                        
                       update_or_append_env_var "Jira_Api_Token" "$jira_token"
 
-                      update_or_append_env_var "AWS_ACCOUNT_ID" "$aws_account_id"
+                      #update_or_append_env_var "AWS_ACCOUNT_ID" "$aws_account_id"
 
                       update_or_append_env_var "API_Access_Token" "$api_access_token"
+
+                      update_or_append_env_var "username" "$user_name"
+
+                      update_or_append_env_var "password" "$pass_word"
                        
                       # Step 6: Copy updated .env file to temp for reuse/debug
 
@@ -192,5 +200,15 @@ pipeline:
             description: ""
             required: false
             value: <+secrets.getValue("account.API_Access_Token")>
+          - name: username
+            type: String
+            description: ""
+            required: false
+            value: <+secrets.getValue("account.c1_username")>
+          - name: password
+            type: String
+            description: ""
+            required: false
+            value: <+secrets.getValue("account.c1_password")>
         delegateSelectors:
           - docker-delegate
