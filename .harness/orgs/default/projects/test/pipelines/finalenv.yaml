@@ -47,3 +47,9 @@ pipeline:
                       python job_launcher.py job_load_in
         delegateSelectors:
           - docker-delegate
+        variables:
+          - name: ENV_SECRET
+            type: String
+            description: ""
+            required: false
+            value: <+secrets.getValue("env")>
