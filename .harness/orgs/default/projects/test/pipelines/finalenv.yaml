@@ -37,10 +37,7 @@ pipeline:
                     connectorRef: Shabdockerhub
                     image: python
                     shell: Sh
-                    envVariables:
-                      ENV_SECRET: <+secrets.getValue("env")>
                     command: |-
-
                       cd src
 
                       pip install -r requirements.txt
@@ -49,10 +46,10 @@ pipeline:
 
                       echo "Contents of the .env file:"
 
-                      cat .env
-
                       export $(cat .env | grep -v '^#' | xargs)
 
                       python job_launcher.py job_load_in
+                    envVariables:
+                      ENV_SECRET: <+secrets.getValue("env")>
         delegateSelectors:
           - docker-delegate
