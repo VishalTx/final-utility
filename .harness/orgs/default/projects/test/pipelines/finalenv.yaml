@@ -38,30 +38,5 @@ pipeline:
                     image: amazon/aws-cli
                     shell: Sh
                     command: aws configure
-              - step:
-                  type: Run
-                  name: Run_1
-                  identifier: Run_1
-                  spec:
-                    connectorRef: Shabdockerhub
-                    image: python
-                    shell: Sh
-                    command: |-
-                      cd src
-                      pip install -r requirements.txt
-
-                      echo "Loading .env from Harness secrets..."
-                      echo "$ENV_SECRET" > .env
-
-                      echo "Contents of the .env file:"
-                      cat .env
-
-                      # Export variables to shell
-                      #export $(grep -v '^#' .env | xargs)
-
-                      echo "Running job_launcher.py..."
-                      python job_launcher.py job_load_in
-                    envVariables:
-                      ENV_SECRET: <+secrets.getValue("env")>
         delegateSelectors:
           - docker-delegate
