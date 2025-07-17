@@ -31,6 +31,15 @@ pipeline:
             steps:
               - step:
                   type: Run
+                  name: Run_2
+                  identifier: Run_2
+                  spec:
+                    connectorRef: account.harnessImage
+                    image: amazon/aws-cli
+                    shell: Sh
+                    command: aws configure
+              - step:
+                  type: Run
                   name: Run_1
                   identifier: Run_1
                   spec:
