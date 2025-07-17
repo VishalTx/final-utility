@@ -10,6 +10,7 @@ pipeline:
         connectorRef: account.Github_OAuth_1711001384310
         repoName: VishalTx/final-utility
         build: <+input>
+        sparseCheckout: []
   stages:
     - stage:
         name: env
