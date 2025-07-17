@@ -38,6 +38,11 @@ pipeline:
                     connectorRef: account.harnessImage
                     image: amazon/aws-cli
                     shell: Sh
-                    command: aws help
+                    command: |-
+                      aws sts assume-role \
+                              --role-arn arn:aws:iam::156151586753:role/D3_Automation_Testing \
+                              --role-session-name harness session \
+                              --region us-east-1 \
+                              --output json
         delegateSelectors:
           - docker-delegate
