@@ -39,6 +39,8 @@ pipeline:
                     image: amazon/aws-cli
                     shell: Sh
                     command: |-
+                      aws configure
+
                       aws sts assume-role \
                         --role-arn arn:aws:iam::156151586753:role/D3_Automation_Testing \
                         --role-session-name harness-session \
