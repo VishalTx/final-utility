@@ -40,9 +40,7 @@ pipeline:
                     shell: Sh
                     command: |-
                       aws sts assume-role \
-                              --role-arn arn:aws:iam::156151586753:role/D3_Automation_Testing \
-                              --role-session-name harness session \
-                              --region us-east-1 \
-                              --output json
+                        --role-arn arn:aws:iam::156151586753:role/D3_Automation_Testing \
+                        --role-session-name demo-session
         delegateSelectors:
           - docker-delegate
