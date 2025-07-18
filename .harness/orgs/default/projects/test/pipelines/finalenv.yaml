@@ -36,7 +36,7 @@ pipeline:
                   identifier: Run_2
                   spec:
                     connectorRef: account.harnessImage
-                    image: amazon/aws-cli
+                    image: saltycrane/aws-cli-and-docker
                     shell: Sh
                     command: docker -v
         delegateSelectors:
