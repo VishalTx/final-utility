@@ -41,9 +41,6 @@ pipeline:
                     command: |-
                       docker -v
 
-                      aws sts assume-role \
-                        --role-arn arn:aws:iam::156151586753:role/D3_Automation_Testing \
-                        --role-session-name harness-session \
-                        --output json > creds.json
+                      aws sts get-caller-identity
         delegateSelectors:
           - docker-delegate
