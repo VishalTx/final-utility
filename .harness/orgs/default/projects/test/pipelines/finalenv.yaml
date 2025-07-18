@@ -41,6 +41,33 @@ pipeline:
                     command: |-
                       docker -v
 
-                      aws sts get-caller-identity
+                      docker run --rm \
+                        -e AWS_ACCESS_KEY_ID="<+secrets.getValue('OLD_ACCESS_KEY')>" \
+                        -e AWS_SECRET_ACCESS_KEY="<+secrets.getValue('OLD_SECRET_KEY')>" \
+                        -e AWS_SESSION_TOKEN="<+secrets.getValue('OLD_SESSION_TOKEN')>" \
+                        amazon/aws-cli sts assume-role \
+                          --role-arn arn:aws:iam::156151586753:role/D3_Automation_Testing \
+                          --role-session-name refresh-session \
+                          --duration-seconds 3600 > creds.json
+
+                      # Now parse and display
+                      export AWS_ACCESS_KEY_ID=$(cat creds.json | jq -r '.Credentials.AccessKeyId')
+                      export AWS_SECRET_ACCESS_KEY=$(cat creds.json | jq -r '.Credentials.SecretAccessKey')
+                      export AWS_SESSION_TOKEN=$(cat creds.json | jq -r '.Credentials.SessionToken')
+
+                      echo "✅ Temporary credentials generated:"
+                      echo "AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID"
+                      echo "AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY"
+                      echo "AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN"
+
+                      # Optionally validate the credentials
+                      docker run --rm \
+                        -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
+                        -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
+                        -e AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN \
+                        amazon/aws-cli sts get-caller-identity
+
+                      cat creds.json
+                      echo "updated the secrets sucessfully"
         delegateSelectors:
           - docker-delegate
