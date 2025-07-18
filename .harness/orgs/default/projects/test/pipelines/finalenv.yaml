@@ -41,6 +41,6 @@ pipeline:
                     command: |-
                       docker -v
 
-                      aws
+                      aws help
         delegateSelectors:
           - docker-delegate
