@@ -38,6 +38,9 @@ pipeline:
                     connectorRef: account.harnessImage
                     image: saltycrane/aws-cli-and-docker
                     shell: Sh
-                    command: docker -v
+                    command: |-
+                      docker -v
+
+                      aws
         delegateSelectors:
           - docker-delegate
