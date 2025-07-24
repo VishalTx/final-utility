@@ -70,4 +70,4 @@ pipeline:
                       cat creds.json
                       echo "updated the secrets sucessfully"
         delegateSelectors:
-          - docker-delegate
+          - docker-delegate-ubuntu
