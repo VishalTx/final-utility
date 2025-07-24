@@ -41,17 +41,17 @@ pipeline:
                     command: |-
                       docker -v
 
+                      # Step 1: Generate new credentials
                       docker run --rm \
                         -e AWS_ACCESS_KEY_ID="<+secrets.getValue('OLD_ACCESS_KEY')>" \
                         -e AWS_SECRET_ACCESS_KEY="<+secrets.getValue('OLD_SECRET_KEY')>" \
                         -e AWS_SESSION_TOKEN="<+secrets.getValue('OLD_SESSION_TOKEN')>" \
-                        
                         amazon/aws-cli sts assume-role \
                           --role-arn arn:aws:iam::156151586753:role/D3_Automation_Testing \
                           --role-session-name refresh-session \
                           --duration-seconds 3600 > creds.json
 
-                      # Now parse and display
+                      # Step 2: Parse the credentials
                       export AWS_ACCESS_KEY_ID=$(cat creds.json | jq -r '.Credentials.AccessKeyId')
                       export AWS_SECRET_ACCESS_KEY=$(cat creds.json | jq -r '.Credentials.SecretAccessKey')
                       export AWS_SESSION_TOKEN=$(cat creds.json | jq -r '.Credentials.SessionToken')
@@ -61,14 +61,36 @@ pipeline:
                       echo "AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY"
                       echo "AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN"
 
-                      # Optionally validate the credentials
+                      # Step 3: Update secrets in Harness Secret Manager via API
+                      HARNESS_API_KEY="<+secrets.getValue('HARNESS_API_KEY')>"  # Stored as a secret
+                      HARNESS_ACCOUNT_ID="vishal.sader@testingxperts.com"
+                      ORG_ID="default"
+                      PROJECT_ID="test"
+
+                      update_secret() {
+                        local SECRET_NAME=$1
+                        local VALUE=$2
+
+                        curl -X PUT "https://app.harness.io/v1/secrets/text/$SECRET_NAME?accountId=$HARNESS_ACCOUNT_ID&orgId=$ORG_ID&projectId=$PROJECT_ID" \
+                          -H "x-api-key: $HARNESS_API_KEY" \
+                          -H "Content-Type: application/json" \
+                          -d '{
+                            "name": "'"$SECRET_NAME"'",
+                            "value": "'"$VALUE"'"
+                          }'
+                      }
+
+                      update_secret "OLD_ACCESS_KEY" "$AWS_ACCESS_KEY_ID"
+                      update_secret "OLD_SECRET_KEY" "$AWS_SECRET_ACCESS_KEY"
+                      update_secret "OLD_SESSION_TOKEN" "$AWS_SESSION_TOKEN"
+
+                      echo "✅ Harness secrets updated via API"
+
+                      # Step 4: Validate the new credentials
                       docker run --rm \
                         -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
                         -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
                         -e AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN \
                         amazon/aws-cli sts get-caller-identity
-
-                      cat creds.json
-                      echo "updated the secrets sucessfully"
         delegateSelectors:
           - docker-delegate-ubuntu
